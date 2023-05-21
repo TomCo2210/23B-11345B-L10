@@ -25,7 +25,18 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        login();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)
+            login();
+        else
+            moveToMainActivity(user);
+    }
+
+    private void moveToMainActivity(FirebaseUser user) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("username", user.getDisplayName());
+        startActivity(intent);
+        finish();
     }
 
     private void login() {
@@ -61,10 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             // ...
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("username", user.getDisplayName());
-            startActivity(intent);
-            finish();
+            moveToMainActivity(user);
         } else {
             // Sign in failed. If response is null the user canceled the
             // sign-in flow using the back button. Otherwise check
